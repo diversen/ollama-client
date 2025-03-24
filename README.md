@@ -10,13 +10,17 @@ A simple multi-user html client for the Ollama API.
 * sqlite3 for data storage
 * uvicorn or unicorn for running a server
 
+## Requirements
+
+You will need an instance of the ollama service running.
+
 ## Features
 
 * user authentication and registration
 * user profile
 * user dialog history
 * user dialog management (delete dialog and messages)
-* user may continue dialog
+* user may continue dialogs
 * tool support (if enabled)
 * python execution (if enabled)
 
@@ -49,9 +53,15 @@ cp config-dist.py config.py
 ```bash
 ollama-client --help
 
+# Ignore SMTP and just create a user
+ollama-client create-user
+
 # Run the client server
 ollama-client server-dev
 
-# Ignore SMTP and just create a user
-ollama-client create-user
+# If data dir is not created then it will be created
+# Default is ./data with default sqlite3 database ./data/database.db
+# Logs are placed in ./data/main.log
+
+
 ```
