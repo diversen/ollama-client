@@ -2,14 +2,14 @@ import logging
 from pathlib import Path
 
 
-# SMTP. Change this to your SMTP server
+# SMTP
 class ConfigSMTP:
 
     HOST = "smtp-relay.brevo.com"
     PORT = 587
-    USERNAME = "e@mail.dk"
+    USERNAME = "mail@mail.dk"
     PASSWORD = "password"
-    DEFAULT_FROM = "Server <e@mail.dk>"
+    DEFAULT_FROM = "Server <mail@10kilobyte.com>"
 
 
 # Default model
@@ -23,7 +23,7 @@ RELOAD = True
 DATA_DIR = "data"
 DATABASE = Path(DATA_DIR) / Path("database.db")
 
-# A safe docker image that can be used to execute python code
+# A docker image that can be used to execute python code safely
 PYTHON_EXEC_TEMPLATE = (
     "docker run --network none --init --rm --memory=256m --memory-swap=256m "
     "--cpus='0.5' --ulimit nproc=2000:2000 --ulimit stack=67108864 "
@@ -33,6 +33,7 @@ PYTHON_EXEC_TEMPLATE = (
 # Very simple PYTHON_EXEC_TEMPLATE but unasafe
 # PYTHON_EXEC_TEMPLATE = "python3 {filename}"
 
+# Not enabled
 PYTHON_EXEC_TEMPLATE = ""
 
 # Tools that can be called from the frontend
@@ -48,9 +49,6 @@ TOOLS_CALLBACK = {
 
 HOSTNAME_WITH_SCHEME = "http://localhost:8000"
 SITE_NAME = "localhost"
-
-HOSTNAME_WITH_SCHEME = "https://home.10kilobyte.com"
-SITE_NAME = "home.10kilobyte.com"
 
 SECRET_KEY = "SECRET_KEY_9E22443E1889947E8BFC31138C967"
 
