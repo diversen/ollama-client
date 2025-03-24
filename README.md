@@ -15,6 +15,5 @@ Built using starlette, jinja2 template, plain html, and plain javascript.
 * python execution (if enabled)
 
 ## Installation
-	
 
-## example models
+...
