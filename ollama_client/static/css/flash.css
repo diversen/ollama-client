@@ -1,0 +1,44 @@
+/**
+ * flash messages
+ */
+ .flash-messages {
+    bottom: 0px;
+    position: fixed;
+    z-index: 1000;
+    left: 0px;
+    max-width: 100%;
+    width: 100%;
+}
+
+
+.flash {
+    opacity: 0.9;
+    cursor: pointer;
+    padding: 25px;
+    margin: 2px 0;
+    animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 0.9;
+    }
+}
+
+.flash-success {
+    background-color: var(--flash-success-color);
+    color: var(--flash-color);
+}
+
+.flash-error {
+    background-color: var(--flash-error-color);
+    color: var(--flash-color);
+}
+
+.flash-notice {
+    background-color: var(--flash-notice-color);
+    color: var(--flash-color);
+}

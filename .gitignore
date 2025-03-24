@@ -1,0 +1,8 @@
+__pycache__
+venv
+node_modules
+package-lock.json
+ollama_serv.egg-info
+ollama-serv-data
+config.py
+data
