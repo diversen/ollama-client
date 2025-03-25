@@ -102,11 +102,8 @@ function createMessageElement(role) {
 function renderStaticUserMessage(message) {
     const { container, contentElement } = createMessageElement('User');
 
-    // set white-space: pre; on contentElement to keep the new lines
-    contentElement.style.whiteSpace = 'pre';
-
+    contentElement.style.whiteSpace = 'break-spaces';
     contentElement.innerText = message;
-    
     
     responsesElem.appendChild(container);
 }
