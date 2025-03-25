@@ -102,7 +102,7 @@ function createMessageElement(role) {
 function renderStaticUserMessage(message) {
     const { container, contentElement } = createMessageElement('User');
 
-    contentElement.style.whiteSpace = 'break-spaces';
+    contentElement.style.whiteSpace = 'pre-wrap';
     contentElement.innerText = message;
     
     responsesElem.appendChild(container);
