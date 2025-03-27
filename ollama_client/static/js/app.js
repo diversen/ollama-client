@@ -229,7 +229,7 @@ async function renderAssistantMessage() {
     responsesElem.appendChild(container);
 
     //  Show loader
-    loader.classList.toggle('hidden');
+    loader.classList.remove('hidden');
 
     // Set streaming flag to true and disable buttons
     isStreaming = true;
@@ -260,6 +260,7 @@ async function renderAssistantMessage() {
                     .forEach(processChunk);
             }
         } catch (error) {
+            loader.classList.add('hidden');
             clearStreaming();
             handleStreamError(error);
         }
