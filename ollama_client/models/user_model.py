@@ -293,4 +293,6 @@ async def get_profile(user_id: int):
 
         cache_key = f"user_{user_id}"
         profile = await cache.get(cache_key)
+        if not profile:
+            profile = {}
         return profile
