@@ -8,7 +8,7 @@ A simple multi-user html client for the Ollama API.
 * jinja2 html templates
 * plain javascript.
 * sqlite3 for data storage
-* uvicorn or unicorn for running a server
+* uvicorn or gunicorn for running a server
 
 ## Requirements
 
