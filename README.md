@@ -24,9 +24,35 @@ You will need an instance of the ollama service running.
 * tool support (if enabled)
 * python execution (if enabled)
 
-## Installation
+## Installation pipx
 
-Using uv and pip
+Install latest version of ollama-client globaly:
+
+<!-- LATEST-VERSION-PIPX -->
+	pipx install git+https://github.com/diversen/ollama-client@{version}
+
+```bash: 
+
+
+Make a dir for configuration and data:
+
+```bash
+mkdir ollama_test
+cd ollama_test
+```
+
+Initialize the configuration and data dir:
+
+```bash
+
+ollama-client
+ollama-client init-system
+ollama-client create-user
+ollama-client server-dev
+```
+
+
+## Installation uv and pip
 
 ```bash
 git clone https://github.com/diversen/ollama-client.git
