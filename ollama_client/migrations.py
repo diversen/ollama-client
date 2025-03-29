@@ -95,5 +95,5 @@ CREATE INDEX message_user_id ON message(user_id);
 
 # List of migrations with keys
 migrations = {
-    "create_orders": create_base_install,
+    "create_base_install": create_base_install,
 }
