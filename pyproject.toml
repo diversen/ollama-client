@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ollama-client"
-version = "0.1.14"
+version = "0.1.15"
 description = "A simple python frontend for serving ollama models"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -26,11 +26,6 @@ Homepage = "https://github.com/diversen/ollama-html-client"
 [tool.bump_version]
 version_file = "ollama_client/__init__.py"
 
-[tool.bump_version.replace_patterns.pipx]
-file = "README.md"
-search = "<!-- LATEST-VERSION-PIPX -->"
-replace = "\tpipx install git+https://github.com/diversen/ollama-client@{version}\n"
-
 [tool.black]
 line-length = 140
 
@@ -42,6 +37,11 @@ include-package-data = true
 
 [tool.setuptools.package-data]
 ollama_serv = [ "templates/**", "static/**/**", "config-dist.py",]
+
+[tool.bump_version.replace_patterns.pipx]
+file = "README.md"
+search = "<!-- LATEST-VERSION-PIPX -->"
+replace = "\tpipx install git+https://github.com/diversen/ollama-client@{version}\n"
 
 [tool.setuptools.packages.find]
 where = [ "",]
