@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ollama-client"
-version = "0.0.6"
+version = "0.0.7"
 description = "A simple python frontend for serving ollama models"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -24,7 +24,7 @@ ollama-client = "ollama_client.cli:cli"
 Homepage = "https://github.com/diversen/ollama-html-client"
 
 [tool.setuptools]
-packages = ["ollama_client"]
+packages = [ "ollama_client",]
 
 [tool.bump_version]
 version_file = "ollama_client/__init__.py"
