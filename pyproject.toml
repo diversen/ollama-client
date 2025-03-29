@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ollama-client"
-version = "0.1.10"
+version = "0.1.11"
 description = "A simple python frontend for serving ollama models"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -33,7 +33,7 @@ line-length = 140
 exclude = [ "docs", "venv", ".venv", "generate_openaws_client", "tests", "example-config", "build", "bin-local",]
 
 [tool.setuptools.package-data]
-ollama_serv = [ "templates/**", "static/**/**", "config-dist.py"]
+ollama_serv = [ "templates/**", "static/**/**", "config-dist.py",]
 
 [tool.setuptools.packages.find]
 where = [ "",]
