@@ -17,7 +17,7 @@ try:
 except ImportError:
 
     # copy the config-dist.py file to the current directory.
-    config_dist_path = Path(__file__).resolve().parent.parent.parent / "config-dist.py"
+    config_dist_path = Path(__file__).resolve().parent.parent / "config-dist.py"
 
     # copy the file to the current directory
     with open(config_dist_path, "r") as f:

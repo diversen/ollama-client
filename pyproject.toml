@@ -33,7 +33,7 @@ line-length = 140
 exclude = [ "docs", "venv", ".venv", "generate_openaws_client", "tests", "example-config", "build", "bin-local",]
 
 [tool.setuptools.package-data]
-ollama_serv = [ "templates/**", "static/**/**",]
+ollama_serv = [ "templates/**", "static/**/**", "config-dist.py"]
 
 [tool.setuptools.packages.find]
 where = [ "",]
