@@ -32,6 +32,9 @@ line-length = 140
 [tool.mypy]
 exclude = [ "docs", "venv", ".venv", "generate_openaws_client", "tests", "example-config", "build", "bin-local",]
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.package-data]
 ollama_serv = [ "templates/**", "static/**/**", "config-dist.py",]
 
