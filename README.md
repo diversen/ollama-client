@@ -31,9 +31,6 @@ Install latest version of ollama-client globaly:
 <!-- LATEST-VERSION-PIPX -->
 	pipx install git+https://github.com/diversen/ollama-client@v0.1.15
 
-```bash: 
-
-
 Make a dir for configuration and data:
 
 ```bash
