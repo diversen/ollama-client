@@ -14,11 +14,12 @@ from ollama_client.migrations import migrations
 from config import DATA_DIR, LOG_LEVEL, DATABASE
 from ollama_client import __version__, __program__
 from ollama_client.core.logging import setup_logging
+from pathlib import Path
 
 
 setup_logging(LOG_LEVEL)
 logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -138,3 +139,15 @@ async def _create_user(email: str, password: str):
         }
 
         await crud.insert("users", insert_values=insert_values)
+
+
+@cli.command(help="Init the system")
+def init_system():
+
+    # run migrations
+    _before_server_start()
+    user_message = """Migrations have been run. You may now run the server with the command"""
+    logger.info(user_message)
+
+    exit(0)
+        
