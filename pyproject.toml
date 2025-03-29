@@ -26,6 +26,11 @@ Homepage = "https://github.com/diversen/ollama-html-client"
 [tool.bump_version]
 version_file = "ollama_client/__init__.py"
 
+[tool.bump_version.replace_patterns.pipx]
+file = "README.md"
+search = "<!-- LATEST-VERSION-PIPX -->"
+replace = "\tpipx install git+https://github.com/diversen/ollama-client@{version}\n"
+
 [tool.black]
 line-length = 140
 
