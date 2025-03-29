@@ -12,6 +12,7 @@
 {% set has_prev = dialogs_info.has_prev %}
 {% set has_next = dialogs_info.has_next %}
 {% set current_page = dialogs_info.current_page %}
+{% set per_page = dialogs_info.per_page %}
 
 <main class="default-container">
     <h3>Dialogs</h3>
@@ -38,6 +39,7 @@
         {% endfor %}
     </div>
 
+    {% if num_dialogs > per_page %}
     <div class="pagination">
         {% if has_prev %}
         <a class="action-link" href="/user/dialogs?page={{ dialogs_info.prev_page }}">Previous</a>
@@ -51,6 +53,7 @@
         <a class="action-link" href="#" disabled>Next</a>
         {% endif %}
     </div>
+    {% endif %}
 
     {% endif %}
 

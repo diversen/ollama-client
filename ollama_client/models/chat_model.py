@@ -141,26 +141,6 @@ async def get_messages(request: Request):
         return messages
 
 
-async def get_dialogs(request: Request):
-    user_id = await session.is_logged_in(request)
-    if not user_id:
-        raise UserValidate("You must be logged in to get dialogs")
-
-    database_connection = DatabaseConnection(DATABASE)
-    async with database_connection.async_transaction_scope() as connection:
-        crud = CRUD(connection)
-        dialogs = await crud.select(
-            table="dialog",
-            filters={
-                "user_id": user_id,
-            },
-            order_by=[("created", "DESC")],
-            limit_offset=(10, 0),
-        )
-
-        return dialogs
-
-
 async def delete_dialog(request: Request):
     user_id = await session.is_logged_in(request)
     dialog_id = request.path_params.get("dialog_id")
@@ -201,7 +181,7 @@ async def _num_dialogs(crud: CRUD, user_id: int) -> int:
     )
 
 
-DIALOGS_PER_PAGE = 20
+DIALOGS_PER_PAGE = 10
 
 
 async def get_dialogs_info(request: Request):
@@ -239,6 +219,7 @@ async def get_dialogs_info(request: Request):
 
         return {
             "current_page": current_page,
+            "per_page": DIALOGS_PER_PAGE,
             "has_prev": has_prev,
             "has_next": has_next,
             "prev_page": prev_page,
