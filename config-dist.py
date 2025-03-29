@@ -53,7 +53,6 @@ SITE_NAME = "localhost"
 SECRET_KEY = "SECRET_KEY_9E22443E1889947E8BFC31138C967"
 
 
-
 # Model tools configuration
 # In my expirence most models are not very good at handling tools
 # And also: If using tools with a model you loss the ability to stream the response

@@ -1,13 +1,9 @@
 from starlette.requests import Request
 import logging
 from ollama_client import __version__
-import uuid
 from ollama_client.core import flash
 from ollama_client.core import session
 from ollama_client.models import user_model
-
-
-from config import RELOAD
 
 
 logger: logging.Logger = logging.getLogger(__name__)
