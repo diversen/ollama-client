@@ -145,9 +145,6 @@ async function sendUserMessage() {
     // Save user message and push to all messages
     await createMessage(currentDialogID, message);
 
-    // Render user message as HTML
-    message.content = mdNoHTML.render(message.content);
-
     // Clear the input field
     messageElem.value = '';
 
