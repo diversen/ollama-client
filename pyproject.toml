@@ -24,7 +24,7 @@ ollama-client = "ollama_client.cli:cli"
 Homepage = "https://github.com/diversen/ollama-html-client"
 
 [tool.setuptools]
-packages = [ "ollama_client",]
+packages = { find = { where = [""], include = ["ollama_client", "ollama_client.*"] } }
 
 [tool.bump_version]
 version_file = "ollama_client/__init__.py"
