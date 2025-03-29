@@ -8,7 +8,8 @@ import sys
 import os
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
+# add "." to the system path
+sys.path.insert(0, ".")
 
 
 def get_system_paths():
