@@ -5,6 +5,7 @@ Middleware for the application
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+
 # from starlette.middleware.gzip import GZipMiddleware
 from starlette.responses import JSONResponse
 from starlette.requests import Request
