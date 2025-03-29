@@ -14,13 +14,6 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 async def get_context(request: Request, variables):
-    logger.debug(f"RELOAD: {RELOAD}")
-    if not RELOAD:
-        version = __version__
-    else:
-        version = uuid.uuid4().hex[:8]
-
-    version = __version__
 
     user_id = await session.is_logged_in(request)
     profile = await user_model.get_profile(user_id)
@@ -30,7 +23,7 @@ async def get_context(request: Request, variables):
         "user_id": user_id,
         "profile": profile,
         "request": request,
-        "version": version,
+        "version": __version__,
         "flash_messages": flash.get_messages(request=request),
     }
 
