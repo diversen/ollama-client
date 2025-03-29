@@ -14,7 +14,6 @@ from ollama_client.migrations import migrations
 from config import DATA_DIR, LOG_LEVEL, DATABASE
 from ollama_client import __version__, __program__
 from ollama_client.core.logging import setup_logging
-from pathlib import Path
 
 
 setup_logging(LOG_LEVEL)
@@ -150,4 +149,3 @@ def init_system():
     logger.info(user_message)
 
     exit(0)
-        
