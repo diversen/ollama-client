@@ -61,4 +61,4 @@ uv pip install -e .
 
 ```
 
-MIT License
+MIT © [Dennis Iversen](https://github.com/diversen)
