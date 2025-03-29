@@ -6,3 +6,4 @@ ollama_serv.egg-info
 ollama-serv-data
 config.py
 data
+ollama_client.egg-info
