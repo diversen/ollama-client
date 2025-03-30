@@ -59,6 +59,4 @@ uv pip install -e .
 * sqlite3 for data storage
 * uvicorn or gunicorn for running a server
 
-```
-
 MIT © [Dennis Iversen](https://github.com/diversen)
