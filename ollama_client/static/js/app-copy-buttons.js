@@ -1,6 +1,6 @@
 import { md } from '/static/js/markdown.js';
 
-async function addCopyButtons(assistantResponseElem) {
+async function addCopyButtons(assistantResponseElem, config) {
 
     const codeBlocks = assistantResponseElem.querySelectorAll('pre code');
 
@@ -10,10 +10,13 @@ async function addCopyButtons(assistantResponseElem) {
         const codeButtonContainer = document.createElement('div');
         codeButtonContainer.classList.add('code-button-container');
 
+        // Check if python is key in config.tools_callback
+        // if (config.tools_callback && config.tools_callback.python) {
+        console.log(config.tools_callback.python)
         /**
          * Button for executing Python code
          */
-        if (code.classList.contains('language-python')) {
+        if (code.classList.contains('language-python') && config.tools_callback.python) {
             const executeButton = document.createElement("button");
             executeButton.classList.add('copy-button');
             executeButton.textContent = "Execute code";

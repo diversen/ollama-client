@@ -8,6 +8,8 @@ import { logError } from '/static/js/error-log.js';
 import { dd } from '/static/js/diff-dom.js';
 import { substituteThinkingTags } from '/static/js/utils.js';
 
+const config = await getConfig();
+
 // Math rendering
 let renderMath = false;
 
@@ -169,7 +171,7 @@ async function renderStaticAssistantMessage(content) {
     contentElement.innerHTML = mdNoHTML.render(content);
     highlightCodeInElement(contentElement);
     await renderMathJax(contentElement);
-    await addCopyButtons(contentElement);
+    await addCopyButtons(contentElement, config);
 }
 
 /**
