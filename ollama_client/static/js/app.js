@@ -5,8 +5,8 @@ import { responsesElem, messageElem, sendButtonElem, newButtonElem, abortButtonE
 import { getIsScrolling, setIsScrolling } from '/static/js/app-events.js';
 import { addCopyButtons } from '/static/js/app-copy-buttons.js';
 import { logError } from '/static/js/error-log.js';
-
-const dd = new diffDOM.DiffDOM()
+import { dd } from '/static/js/diff-dom.js';
+import { substituteThinkingTags } from '/static/js/utils.js';
 
 // Math rendering
 let renderMath = false;
@@ -189,21 +189,9 @@ async function renderMathJax(contentElem) {
 }
 
 /**
- * Substitute thinking tags
- */
-function substituteThinkingTags(streamedResponseText) {
-    streamedResponseText = streamedResponseText.replace(/<think>/g, '**Think begin**');
-    streamedResponseText = streamedResponseText.replace(/<\/think>/g, '**Think end**');
-
-    streamedResponseText = streamedResponseText.replace(/<thinking>/g, '**Think begin**');
-    streamedResponseText = streamedResponseText.replace(/<\/thinking>/g, '**Think end**');
-
-    return streamedResponseText;
-}
-
-/**
  * Update update content diff
  */
+
 function updateContentDiff(contentElement, hiddenContentElem, streamedResponseText) {
     streamedResponseText = substituteThinkingTags(streamedResponseText);
     hiddenContentElem.innerHTML = mdNoHTML.render(streamedResponseText);
@@ -215,6 +203,7 @@ function updateContentDiff(contentElement, hiddenContentElem, streamedResponseTe
         console.log("Error in diffDOMExec:", error);
     }
 }
+
 
 /**
  * Render assistant message with streaming
@@ -282,7 +271,7 @@ async function renderAssistantMessage() {
             totalTokenCount += 1;
             streamedResponseText += messagePart.content;
 
-            if (totalTokenCount % 10 === 0) {
+            if (totalTokenCount % 1 === 0) {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 scrollToBottom();
             }
