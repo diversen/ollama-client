@@ -114,6 +114,7 @@ async def config_(request: Request):
     """
     config_ = {
         "default_model": config.DEFAULT_MODEL,
+        "tools_callback": config.TOOLS_CALLBACK,
     }
 
     return JSONResponse(config_)
