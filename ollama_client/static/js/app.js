@@ -229,6 +229,8 @@ async function renderAssistantMessage() {
     const hiddenContentElem = document.createElement('div');
     const selectModel = selectModelElem.value;
 
+    scrollToBottom();
+
     // Stream processing function
     const processStream = async (reader, decoder) => {
         try {
@@ -280,10 +282,9 @@ async function renderAssistantMessage() {
 
             if (isDone) {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
-                await renderMathJax(contentElement);
-                await addCopyButtons(contentElement, config);
-                clearStreaming();
                 scrollToBottom();
+                clearStreaming();
+                
             }
         } catch (error) {
             console.log("Error in processChunk:", error);
@@ -332,6 +333,10 @@ async function renderAssistantMessage() {
         clearStreaming();
         Flash.setMessage('An error occurred. Please try again.', 'error');
     }
+
+    // Done processing
+    await renderMathJax(contentElement);
+    await addCopyButtons(contentElement, config);
 
     let assistantMessage = { role: 'assistant', content: streamedResponseText };
     await createMessage(currentDialogID, assistantMessage);
