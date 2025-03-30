@@ -2,7 +2,7 @@
 
 A simple multi-user HTML client for the Ollama API.
 
-[![ollama-client](docs/screenshot.png)](https://ollama.com)
+[![ollama-client](docs/screenshot.png)](docs/screenshot.png)
 
 ## Requirements
 
