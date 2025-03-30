@@ -44,12 +44,11 @@ PYTHON_EXEC_TEMPLATE = (
 PYTHON_EXEC_TEMPLATE = "python3 {filename}"
 
 # Tools that can be called from the frontend
-TOOLS_CALLBACK = {
+TOOLS_CALLBACK: dict = {
     # this tool may be called on /tools/python
     # The tool will call the function execute in the module ollama_client.tools.python_exec
     # The result will be added to the dialog
-    
-    # Uncomment in order to run python code. 
+    # Uncomment in order to run python code.
     # This is an button option when python code is generated
     # "python": {
     #     "module": "ollama_client.tools.python_exec",
@@ -81,10 +80,10 @@ TOOLS_CALLBACK = {
 
 # # Models that may use ollama tools
 # # Leave empty if no models may use tools
-# TOOL_MODELS = ["mistral-nemo:latest"]
+# TOOL_MODELS: list = ["mistral-nemo:latest"]
 
 # # Tools available
-# TOOLS_AVAILABLE = [add_two_numbers]
+# TOOLS_AVAILABLE: list = [add_two_numbers]
 
-TOOL_MODELS = []
-TOOLS_AVAILABLE = []
+TOOL_MODELS: list = []
+TOOLS_AVAILABLE: list = []

@@ -106,7 +106,7 @@ function renderStaticUserMessage(message) {
 
     contentElement.style.whiteSpace = 'pre-wrap';
     contentElement.innerText = message;
-    
+
     responsesElem.appendChild(container);
 }
 
@@ -284,7 +284,7 @@ async function renderAssistantMessage() {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 scrollToBottom();
                 clearStreaming();
-                
+
             }
         } catch (error) {
             console.log("Error in processChunk:", error);
