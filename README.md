@@ -2,6 +2,8 @@
 
 A simple multi-user HTML client for the Ollama API.
 
+[![ollama-client](docs/screenshot.png)](https://ollama.com)
+
 ## Requirements
 
 You will need an instance of the ollama service running.

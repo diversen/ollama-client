@@ -281,7 +281,7 @@ async function renderAssistantMessage() {
             if (isDone) {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 await renderMathJax(contentElement);
-                await addCopyButtons(contentElement);
+                await addCopyButtons(contentElement, config);
                 clearStreaming();
                 scrollToBottom();
             }

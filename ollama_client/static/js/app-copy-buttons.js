@@ -10,9 +10,6 @@ async function addCopyButtons(assistantResponseElem, config) {
         const codeButtonContainer = document.createElement('div');
         codeButtonContainer.classList.add('code-button-container');
 
-        // Check if python is key in config.tools_callback
-        // if (config.tools_callback && config.tools_callback.python) {
-        console.log(config.tools_callback.python)
         /**
          * Button for executing Python code
          */
