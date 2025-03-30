@@ -1,6 +1,6 @@
 # Ollama client
 
-A simple multi-user HTML client for the Ollama API.
+A simple multi-user HTML or web client for the Ollama API.
 
 [![ollama-client](docs/screenshot.png)](docs/screenshot.png)
 
@@ -40,7 +40,6 @@ ollama-client init-system
 ollama-client create-user
 ollama-client server-dev
 ```
-
 
 ## Installation using uv and pip
 
