@@ -12,9 +12,11 @@ You will need an instance of the ollama service running.
 
 * user authentication and registration
 * user profile
+* dark and light mode
 * user dialog history
 * user dialog management (delete dialogs)
-* user may continue dialogs
+* copy dialog message to clipboard
+* load and continue saved dialogs
 * tool support (if enabled)
 * python execution (if enabled)
 
