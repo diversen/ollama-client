@@ -23,7 +23,7 @@ You will need an instance of the ollama service running.
 Install latest version of ollama-client globaly:
 
 <!-- LATEST-VERSION-PIPX -->
-	pipx install git+https://github.com/diversen/ollama-client@v0.1.21
+	pipx install git+https://github.com/diversen/ollama-client@v0.1.22
 
 Make a dir for configuration and data:
 
