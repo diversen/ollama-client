@@ -286,6 +286,8 @@ pre code {
 }
 
 .message-actions svg {
+    color: var(--nav-text);
+    fill: var(--nav-text);
     width: 15px;
     height: 15px;
 }
