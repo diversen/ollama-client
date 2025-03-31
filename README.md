@@ -49,13 +49,10 @@ ollama-client server-dev
 
 ## Upgrade
 
-```bash
-
 Upgrade to latest version
 
 <!-- LATEST-VERSION-PIPX-FORCE -->
 	pipx install git+https://github.com/diversen/ollama-client@v0.1.23 --force
-
 
 
 ## Installation using uv and pip
