@@ -13,7 +13,7 @@
     <form method="post" action="/user/profile" class="profile-form">
         <label for="username">Your Username</label>
         <input type="text" id="username" name="username" placeholder="Your username" aria-label="Username" value="{{ profile.username }}">
-        <div>
+        <div class="checkbox-container">
             <label for="dark_mode">Dark theme</label>
             <input type="checkbox" aria-label="Dark mode" value="1" id="dark_theme" name="dark_mode" {% if profile.dark_theme %}checked{% endif %}>
         </div>

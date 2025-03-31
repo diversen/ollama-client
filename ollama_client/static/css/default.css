@@ -381,6 +381,11 @@ a.delete svg {
     margin-top: 10px;
 }
 
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
 .hidden {
     display: none;
