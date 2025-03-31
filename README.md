@@ -36,10 +36,27 @@ Initialize the configuration and data dir:
 
 ```bash
 ollama-client
+
+# Run initial migrations
 ollama-client init-system
+
+# create a user
 ollama-client create-user
+
+# start dev server
 ollama-client server-dev
 ```
+
+## Upgrade
+
+```bash
+
+Upgrade to latest version
+
+<!-- LATEST-VERSION-PIPX-FORCE -->
+	pipx install git+https://github.com/diversen/ollama-client@v0.1.22
+
+
 
 ## Installation using uv and pip
 

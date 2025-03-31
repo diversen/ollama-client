@@ -43,6 +43,11 @@ file = "README.md"
 search = "<!-- LATEST-VERSION-PIPX -->"
 replace = "\tpipx install git+https://github.com/diversen/ollama-client@{version}\n"
 
+[tool.bump_version.replace_patterns.pipx_force]
+file = "README.md"
+search = "<!-- LATEST-VERSION-PIPX-FORCE -->"
+replace = "\tpipx install git+https://github.com/diversen/ollama-client@{version} --force\n"
+
 [tool.setuptools.packages.find]
 where = [ "",]
 include = [ "ollama_client", "ollama_client.*",]
