@@ -54,6 +54,7 @@ Upgrade to latest version
 <!-- LATEST-VERSION-PIPX-FORCE -->
 	pipx install git+https://github.com/diversen/ollama-client@v0.1.24 --force
 
+And then restart the running server instance. 
 
 ## Installation using uv and pip
 
