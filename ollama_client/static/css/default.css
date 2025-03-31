@@ -161,7 +161,6 @@ nav svg {
 }
 
 .loading-model {
-    margin-top: 7px;
     pointer-events: none;
     width: 1em;
     height: 1em;
@@ -171,6 +170,7 @@ nav svg {
     border-radius: 50%;
     animation: loadingspin 1s linear infinite;
 }
+
 
 @keyframes loadingspin {
     100% {
@@ -258,10 +258,6 @@ pre code {
 
 }
 
-.hidden {
-    display: none;
-}
-
 .executed-code-container {
     background-color: var(--background-alt);
     color: var(--text-bright);
@@ -285,6 +281,14 @@ pre code {
     }
 }
 
+.message-actions {
+    display: flex;
+}
+
+.message-actions svg {
+    width: 15px;
+    height: 15px;
+}
 
 .action-link {
     background-color: var(--nav-background);
@@ -319,6 +323,7 @@ pre code {
     margin-bottom: 2px;
     display: flex;
     gap: 5px;
+    align-items: anchor-center;
 }
 
 .role_user {
@@ -372,4 +377,9 @@ a.delete svg {
 
 .pagination {
     margin-top: 10px;
+}
+
+
+.hidden {
+    display: none;
 }

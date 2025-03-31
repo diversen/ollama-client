@@ -71,33 +71,44 @@ function highlightCodeInElement(element) {
 /**
  * Create a message element with role and content
  */
+
 function createMessageElement(role) {
     const containerClass = `${role.toLowerCase()}-message`;
     const messageContainer = document.createElement('div');
     messageContainer.classList.add(containerClass);
 
-    // Add role element
-    const roleElement = document.createElement('h3');
-    roleElement.classList.add('role');
-    roleElement.classList.add('role_' + role.toLowerCase());
-    roleElement.textContent = role;
+    // Use template literals to create the HTML structure
+    messageContainer.innerHTML = `
+        <h3 class="role role_${role.toLowerCase()}">
+            ${role}
+            <div class="loading-model hidden"></div>
+        </h3>
+        <div class="content"></div>
+        <div class="message-actions hidden">
+            <a href="#" class="copy-message" title="Copy message to clipboard">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>
+            </a>
+        </div>
+    `;
 
-    // Add loader span inside role element if assistant
+    // Select the elements from the generated HTML
+    const loaderSpan = messageContainer.querySelector('.loading-model');
+    const contentElement = messageContainer.querySelector('.content');
 
-    const loaderSpan = document.createElement('div');
-    loaderSpan.classList.add('loading-model');
-    loaderSpan.classList.add('hidden');
-    roleElement.appendChild(loaderSpan);
-
-
-    // Add content element
-    const contentElement = document.createElement('div');
-    contentElement.classList.add('content');
-
-    // Append role and content elements to the container
-    messageContainer.append(roleElement, contentElement);
     return { container: messageContainer, contentElement: contentElement, loader: loaderSpan };
 }
+
+function renderCopyMessage(container, message) {
+    const messageActions = container.querySelector('.message-actions');
+    messageActions.classList.remove('hidden');
+    messageActions.querySelector('.copy-message').addEventListener('click', () => {
+        console.log('Copying message to clipboard');
+        navigator.clipboard.writeText(message);
+        Flash.setMessage('Message copied to clipboard', 'success');
+    });
+}
+
+
 /**
  * Render user message to the DOM
  */
@@ -106,6 +117,9 @@ function renderStaticUserMessage(message) {
 
     contentElement.style.whiteSpace = 'pre-wrap';
     contentElement.innerText = message;
+
+    // Render copy message
+    renderCopyMessage(container, message);
 
     responsesElem.appendChild(container);
 }
@@ -164,11 +178,15 @@ async function sendUserMessage() {
 /**
  * Render static assistant message (without streaming)
  */
-async function renderStaticAssistantMessage(content) {
+async function renderStaticAssistantMessage(message) {
     const { container, contentElement } = createMessageElement('Assistant');
     responsesElem.appendChild(container);
 
-    contentElement.innerHTML = mdNoHTML.render(content);
+    // Render copy message
+    renderCopyMessage(container, message);
+    message = substituteThinkingTags(message);
+
+    contentElement.innerHTML = mdNoHTML.render(message);
     highlightCodeInElement(contentElement);
     await renderMathJax(contentElement);
     await addCopyButtons(contentElement, config);
@@ -340,6 +358,11 @@ async function renderAssistantMessage() {
 
     let assistantMessage = { role: 'assistant', content: streamedResponseText };
     await createMessage(currentDialogID, assistantMessage);
+
+    // Render copy message
+    renderCopyMessage(container, streamedResponseText);
+    scrollToBottom();
+
     currentDialogMessages.push(assistantMessage);
 }
 
@@ -362,11 +385,12 @@ async function loadDialog(savedMessages) {
 
     for (const msg of currentDialogMessages) {
         if (msg.role === 'user') {
-            const mes = substituteThinkingTags(msg.content);
-            renderStaticUserMessage(mes);
+            // const mes = substituteThinkingTags(msg.content);
+            const message = msg.content;
+            renderStaticUserMessage(message);
         } else {
-            const mes = substituteThinkingTags(msg.content);
-            await renderStaticAssistantMessage(mes, 'Assistant');
+            const message = msg.content;
+            await renderStaticAssistantMessage(message, 'Assistant');
         }
     }
 }
