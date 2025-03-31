@@ -18,7 +18,7 @@ You will need an instance of the ollama service running.
 * tool support (if enabled)
 * python execution (if enabled)
 
-## Installation pipx
+## Installation using pipx
 
 Install latest version of ollama-client globaly:
 
@@ -47,7 +47,7 @@ ollama-client create-user
 ollama-client server-dev
 ```
 
-## Upgrade
+## Upgrade using pipx
 
 Upgrade to latest version
 
