@@ -10,6 +10,11 @@ import { substituteThinkingTags } from '/static/js/utils.js';
 
 const config = await getConfig();
 
+// Copy icon and check icon
+const copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>`;
+
+const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
+
 // Math rendering
 let renderMath = false;
 
@@ -86,7 +91,7 @@ function createMessageElement(role) {
         <div class="content"></div>
         <div class="message-actions hidden">
             <a href="#" class="copy-message" title="Copy message to clipboard">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>
+                ${copyIcon}
             </a>
         </div>
     `;
@@ -99,12 +104,19 @@ function createMessageElement(role) {
 }
 
 function renderCopyMessage(container, message) {
+    
     const messageActions = container.querySelector('.message-actions');
     messageActions.classList.remove('hidden');
     messageActions.querySelector('.copy-message').addEventListener('click', () => {
         console.log('Copying message to clipboard');
         navigator.clipboard.writeText(message);
-        Flash.setMessage('Message copied to clipboard', 'success');
+
+        // Alter icon to check icon for 3 seconds
+        const copyButton = messageActions.querySelector('.copy-message');
+        copyButton.innerHTML = checkIcon;
+        setTimeout(() => {
+            copyButton.innerHTML = copyIcon;
+        }, 2000);
     });
 }
 
