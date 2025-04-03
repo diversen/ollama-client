@@ -32,6 +32,9 @@ SITE_NAME = "home.10kilobyte.com"
 # NOTE: Session secret key. Change this to a more random string
 SECRET_KEY = "SOME_SECRET_KEY"
 
+# Use mathjax for rendering math
+USE_MATHJAX = True
+
 # A docker image that can be used to execute python code in a secure environment
 # See: https://github.com/diversen/secure-python
 # PYTHON_EXEC_TEMPLATE = (
