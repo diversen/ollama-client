@@ -34,27 +34,27 @@ SECRET_KEY = "SOME_SECRET_KEY"
 
 # A docker image that can be used to execute python code in a secure environment
 # See: https://github.com/diversen/secure-python
-PYTHON_EXEC_TEMPLATE = (
-    "docker run --network none --init --rm --memory=256m --memory-swap=256m "
-    "--cpus='0.5' --ulimit nproc=2000:2000 --ulimit stack=67108864 "
-    "-v {filename}:/sandbox/script.py secure-python script.py"
-)
+# PYTHON_EXEC_TEMPLATE = (
+#     "docker run --network none --init --rm --memory=256m --memory-swap=256m "
+#     "--cpus='0.5' --ulimit nproc=2000:2000 --ulimit stack=67108864 "
+#     "-v {filename}:/sandbox/script.py secure-python script.py"
+# )
 
-# NOTE: This is not a secure way to run arbitrary python code
-PYTHON_EXEC_TEMPLATE = "python3 {filename}"
+# # NOTE: This is not a secure way to run arbitrary python code
+# PYTHON_EXEC_TEMPLATE = "python3 {filename}"
 
-# Tools that can be called from the frontend
-TOOLS_CALLBACK: dict = {
-    # this tool may be called on /tools/python
-    # The tool will call the function execute in the module ollama_client.tools.python_exec
-    # The result will be added to the dialog
-    # Uncomment in order to run python code.
-    # This is an button option when python code is generated
-    # "python": {
-    #     "module": "ollama_client.tools.python_exec",
-    #     "def": "execute",
-    # }
-}
+# # Tools that can be called from the frontend
+# TOOLS_CALLBACK: dict = {
+#     # this tool may be called on /tools/python
+#     # The tool will call the function execute in the module ollama_client.tools.python_exec
+#     # The result will be added to the dialog
+#     # Uncomment in order to run python code.
+#     # This is an button option when python code is generated
+#     "python": {
+#         "module": "ollama_client.tools.python_exec",
+#         "def": "execute",
+#     }
+# }
 
 
 # Model tools configuration
@@ -84,6 +84,3 @@ TOOLS_CALLBACK: dict = {
 
 # # Tools available
 # TOOLS_AVAILABLE: list = [add_two_numbers]
-
-TOOL_MODELS: list = []
-TOOLS_AVAILABLE: list = []
