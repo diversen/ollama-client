@@ -11,7 +11,6 @@ from ollama_client.core import session
 from ollama_client.core.templates import get_templates
 from ollama_client.models import chat_model, user_model
 from ollama_client.core.exceptions import UserValidate
-from config import TOOLS_AVAILABLE, TOOLS_CALLBACK
 from ollama_client.tools import tools_utils
 
 
@@ -30,7 +29,7 @@ async def chat_page(request: Request):
     context = {
         "chat": True,
         "model_names": model_names,
-        "default_model": config.DEFAULT_MODEL,
+        "default_model": getattr(config, "DEFAULT_MODEL", ""),
         "request": request,
         "title": "Ollama Chat",
     }
@@ -68,9 +67,9 @@ async def _chat_response_stream(messages, model, logged_in):
             "stream": True,
         }
 
-        if tools_utils.is_tools_available(model):
+        if tools_utils.is_tools_supported(model):
             logger.info(f"Tools available for model: {model}")
-            chat_args["tools"] = TOOLS_AVAILABLE
+            chat_args["tools"] = getattr(config, "TOOLS_AVAILABLE", [])
         else:
             logger.info(f"No tools available for model: {model}")
 
@@ -113,8 +112,9 @@ async def config_(request: Request):
     Get frontend configuration
     """
     config_ = {
-        "default_model": config.DEFAULT_MODEL,
-        "tools_callback": config.TOOLS_CALLBACK,
+        "default_model": getattr(config, "DEFAULT_MODEL", ""),
+        "tools_callback": getattr(config, "TOOLS_CALLBACK", {}),
+        "use_mathjax": getattr(config, "USE_MATHJAX", False),
     }
 
     return JSONResponse(config_)
@@ -138,7 +138,9 @@ async def json_tools(request: Request):
     tool = request.path_params["tool"]
 
     # Get tool definition
-    tool_def = TOOLS_CALLBACK.get(tool, None)
+    tools_callback = getattr(config, "TOOLS_CALLBACK", {})
+    tool_def = tools_callback.get(tool, {})
+
     if not tool_def:
         return JSONResponse({"tool": tool, "text": "Tool not found"}, status_code=404)
 
@@ -147,10 +149,12 @@ async def json_tools(request: Request):
         module = __import__(tool_def["module"], fromlist=[tool_def["def"]])
         function = getattr(module, tool_def["def"])
         ret_data = function(data)
+        logger.debug(f"Tool result: {ret_data}")
 
     except Exception:
         logger.exception(f"Error calling tool {tool}")
 
+    # Better error handling
     return JSONResponse({"tool": tool, "text": ret_data})
 
 

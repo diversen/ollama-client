@@ -1,6 +1,6 @@
 import subprocess
 import tempfile
-from config import PYTHON_EXEC_TEMPLATE
+import config
 import logging
 from logging import Logger
 
@@ -23,9 +23,11 @@ def _generate_script(script_src):
 
 def execute(data: dict) -> str:
 
-    logger.debug(data)
-
-    if not PYTHON_EXEC_TEMPLATE:
+    logger.info(data)
+    python_exec_template = getattr(config, "PYTHON_EXEC_TEMPLATE", "")
+    logger.info(f"Python exec template: {python_exec_template}")
+    
+    if not python_exec_template:
         return "<strong>The server is not configured to execute Python code</strong>"
     try:
         text = data["text"]
@@ -36,7 +38,7 @@ def execute(data: dict) -> str:
         tmp_file = _generate_script(code)
 
         # Format the Python execution command
-        PYTHON_EXEC = PYTHON_EXEC_TEMPLATE.format(filename=tmp_file)
+        PYTHON_EXEC = python_exec_template.format(filename=tmp_file)
 
         # Run the script and capture the output
         result = subprocess.run(
