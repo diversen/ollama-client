@@ -85,7 +85,6 @@ async def _chat_response_stream(messages, model, logged_in):
                 yield f"data: {json.dumps(data)}\n\n"
             else:
                 part_json = json.dumps(part_dict)
-                logger.info(f"Part: {part_json}")
                 yield f"data: {part_json}\n\n"
 
     except Exception:

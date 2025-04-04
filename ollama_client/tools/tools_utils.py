@@ -10,7 +10,7 @@ tools_models = getattr(config, "TOOL_MODELS", [])
 
 def is_tools_supported(model: str):
 
-    # Check if tools are available in config    
+    # Check if tools are available in config
     if not tools_available:
         return False
 

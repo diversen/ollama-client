@@ -26,7 +26,7 @@ def execute(data: dict) -> str:
     logger.info(data)
     python_exec_template = getattr(config, "PYTHON_EXEC_TEMPLATE", "")
     logger.info(f"Python exec template: {python_exec_template}")
-    
+
     if not python_exec_template:
         return "<strong>The server is not configured to execute Python code</strong>"
     try:
