@@ -208,6 +208,16 @@ async function renderStaticAssistantMessage(message) {
  * Render math if enabled
  */
 async function renderMathJax(contentElem) {
+    // This is not working optimally. 
+    // LLMs might produce sentences like: 
+    // a) (sufficiently well-behaved) or
+    // b) ( e^{i\omega t} ).
+    // 
+    // Besides that markdown usually also escapes the backslash
+    // and this may mess up rendering.
+    //
+    // Fix matrix rendering. This be done like this:
+    // Replace '\\' with '\cr'
     if (useMathjax) {
         renderMathInElement(contentElem, {
             delimiters: [
@@ -215,7 +225,13 @@ async function renderMathJax(contentElem) {
                 { left: '\(', right: '\)', display: false },
                 { left: '\[', right: '\]', display: true },
                 { left: '\begin{equation}', right: '\end{equation}', display: true }
-            ]
+            ],
+
+            // preProcess: (text) => {
+            //     console.log(text)
+            //     return text
+            // }
+
         });
     }
 }
