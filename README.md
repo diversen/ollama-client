@@ -19,6 +19,7 @@ You will need an instance of the ollama service running.
 * load and continue saved dialogs
 * tool support (if enabled)
 * python execution (if enabled)
+* supports ollama and openai models (and others that can use the openai api)
 
 ## Installation using pipx
 
