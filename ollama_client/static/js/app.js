@@ -231,13 +231,15 @@ async function renderMathJax(contentElem) {
                 {left: "$$", right: "$$", display: true},
                 {left: "$", right: "$", display: false},
                 {left: "\\(", right: "\\)", display: false},
+                {left: "\(", right: "\)", display: false},
                 {left: "\\begin{equation}", right: "\\end{equation}", display: true},
                 {left: "\\begin{align}", right: "\\end{align}", display: true},
                 {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
                 {left: "\\begin{gather}", right: "\\end{gather}", display: true},
                 {left: "\\begin{CD}", right: "\\end{CD}", display: true},
-                {left: "\\[", right: "\\]", display: true}
-            ]
+                {left: "\\[", right: "\\]", display: true},
+                {left: "\[", right: "\]", display: true}
+            ],
 
             // preProcess: (text) => {
             //     console.log(text)
@@ -303,7 +305,7 @@ async function renderAssistantMessage() {
                 }
 
                 if (done) break;
-                let decoded = decoder.decode(value, { stream: true });
+                const decoded = decoder.decode(value, { stream: true });
                 let dataElems = decoded.split('data: '); 
 
                 // Remove empty elements form the array
@@ -324,7 +326,7 @@ async function renderAssistantMessage() {
 
             const data = JSON.parse(dataPart);
             const messagePart = data.choices[0].delta.content;
-            const isDone = data.choices[0].finish_reason
+            const finishReason = data.choices[0].finish_reason
             const error = data.error;
 
             if (error) {
@@ -332,14 +334,17 @@ async function renderAssistantMessage() {
             }
 
             totalTokenCount += 1;
-            streamedResponseText += messagePart;
+
+            if (!finishReason) {
+                streamedResponseText += messagePart;
+            }
 
             if (totalTokenCount % 1 === 0) {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 scrollToBottom();
             }
 
-            if (isDone) {
+            if (finishReason) {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 console.log('Done streaming');
                 scrollToBottom();
