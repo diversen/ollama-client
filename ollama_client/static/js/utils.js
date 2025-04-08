@@ -10,8 +10,9 @@ function substituteThinkingTags(streamedResponseText) {
     streamedResponseText = streamedResponseText.replace(/<\/think>/g, '**Think end**');
     streamedResponseText = streamedResponseText.replace(/<\/thinking>/g, '**Think end**');
     streamedResponseText = streamedResponseText.replace(/<\/thought>/g, '**Think end**');
-    // </thought>
 
+    // Substitute '\\' with '\cr '
+    streamedResponseText = streamedResponseText.replace(/\\\\/g, '\\cr');
     return streamedResponseText;
 }
 
