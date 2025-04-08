@@ -33,7 +33,7 @@ SITE_NAME = "home.10kilobyte.com"
 SECRET_KEY = "SOME_SECRET_KEY"
 
 # Use mathjax for rendering math
-USE_MATHJAX = True
+USE_MATHJAX = False
 
 # A docker image that can be used to execute python code in a secure environment
 # See: https://github.com/diversen/secure-python
