@@ -14,7 +14,7 @@ async def get_context(request: Request, variables):
 
     user_id = await session.is_logged_in(request)
     profile = await user_model.get_profile(user_id)
-    use_mathjax = getattr(config, "USE_MATHJAX", False)
+    use_katex = getattr(config, "USE_KATEX", False)
 
     default_context = {
         "logged_in": user_id,
@@ -22,7 +22,7 @@ async def get_context(request: Request, variables):
         "profile": profile,
         "request": request,
         "version": __version__,
-        "use_mathjax": use_mathjax,
+        "use_katex": use_katex,
         "flash_messages": flash.get_messages(request=request),
     }
 

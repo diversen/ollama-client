@@ -7,9 +7,9 @@ class ConfigSMTP:
 
     HOST = "smtp-relay.brevo.com"
     PORT = 587
-    USERNAME = "mail@mail.dk"
+    USERNAME = "user@mail.dk"
     PASSWORD = "password"
-    DEFAULT_FROM = "Server <mail@10kilobyte.com>"
+    DEFAULT_FROM = "Chat <mail@10kilobyte.com>"
 
 
 # Default model
@@ -29,61 +29,96 @@ DATABASE = Path(DATA_DIR) / Path("database.db")
 HOSTNAME_WITH_SCHEME = "https://home.10kilobyte.com"
 SITE_NAME = "home.10kilobyte.com"
 
-# NOTE: Session secret key. Change this to a more random string
-SECRET_KEY = "SOME_SECRET_KEY"
+# Session secret key
+SECRET_KEY = "SECRET_KEY"
 
 # Use mathjax for rendering math
-USE_MATHJAX = False
+USE_KATEX = False
 
+# Tools that can be called from the frontend
+#
+# Only available tool is python execution.
+# Very simple PYTHON_EXEC_TEMPLATE but unasafe
+# PYTHON_EXEC_TEMPLATE = "python3 {filename}"
 # A docker image that can be used to execute python code in a secure environment
 # See: https://github.com/diversen/secure-python
+#
 # PYTHON_EXEC_TEMPLATE = (
 #     "docker run --network none --init --rm --memory=256m --memory-swap=256m "
 #     "--cpus='0.5' --ulimit nproc=2000:2000 --ulimit stack=67108864 "
 #     "-v {filename}:/sandbox/script.py secure-python script.py"
 # )
 
-# # NOTE: This is not a secure way to run arbitrary python code
-# PYTHON_EXEC_TEMPLATE = "python3 {filename}"
-
-# # Tools that can be called from the frontend
-# TOOLS_CALLBACK: dict = {
+# TOOLS_CALLBACK = {
 #     # this tool may be called on /tools/python
 #     # The tool will call the function execute in the module ollama_client.tools.python_exec
 #     # The result will be added to the dialog
-#     # Uncomment in order to run python code.
-#     # This is an button option when python code is generated
+#     # Uncomment in order to run python code
 #     "python": {
 #         "module": "ollama_client.tools.python_exec",
 #         "def": "execute",
 #     }
 # }
 
-
-# Model tools configuration
-
-# In my expirence most models are not very good at handling tools
-# And also: If using tools with a model you loss the ability to stream the response
-# The response will be returned as a single response
-# But anyway here is an example of how to use tools with models
-
-# def add_two_numbers(a: int, b: int) -> str:
-#     """
-#     Add two numbers
-
-#     Args:
-#       a: The first integer number
-#       b: The second integer number
-
-#     Returns:
-#       str: The sum of the two numbers
-#     """
-#     return f"The result of adding {a} and {b} is: {a + b}"
+PROVIDERS = {
+    # "openai": {
+    #     "base_url": "https://api.openai.com/v1",
+    #     "api_key": "API_KEY",
+    # },
+    "ollama": {
+        "base_url": "http://localhost:11434/v1",
+        "api_key": "ollama",
+    },
+}
 
 
-# # Models that may use ollama tools
-# # Leave empty if no models may use tools
-# TOOL_MODELS: list = ["mistral-nemo:latest"]
+MODELS = {
+    # "gpt-4o-mini": "openai",
+    "deepseek-r1:14b": "ollama", 
+}
 
-# # Tools available
-# TOOLS_AVAILABLE: list = [add_two_numbers]
+TOOL_MODELS = ["gpt-40-mini"]
+
+
+# # Model tools configuration
+
+# # In my expirence most ollama models are not very good at handling tools
+# # And also: If using tools with a model you loss the ability to stream the response
+# # The response will be returned as a single response
+# # But anyway here is an example of how to use tools with models
+
+# def get_current_time(timezone: str) -> str:
+
+#     import datetime
+#     import pytz
+
+#     try:
+#         now = datetime.datetime.now(pytz.timezone(timezone))
+#         return f"The current time in {timezone} is {now.strftime('%H:%M:%S')}."
+#     except Exception:
+#         return f"Invalid timezone: {timezone}"
+
+
+# # Tool registry
+# TOOL_REGISTRY = {"get_current_time": get_current_time}
+
+# # Tools
+# TOOLS = [
+#     {
+#         "type": "function",
+#         "function": {
+#             "name": "get_current_time",
+#             "description": "Returns the current time in a specific timezone",
+#             "parameters": {
+#                 "type": "object",
+#                 "properties": {
+#                     "timezone": {
+#                         "type": "string",
+#                         "description": "Timezone in IANA format, e.g. 'Europe/Copenhagen'",
+#                     }
+#                 },
+#                 "required": ["timezone"],
+#             },
+#         },
+#     }
+# ]

@@ -184,7 +184,7 @@ async def config_(request: Request):
     config_ = {
         "default_model": getattr(config, "DEFAULT_MODEL", ""),
         "tools_callback": getattr(config, "TOOLS_CALLBACK", {}),
-        "use_mathjax": getattr(config, "USE_MATHJAX", False),
+        "use_katex": getattr(config, "USE_KATEX", False),
     }
 
     return JSONResponse(config_)

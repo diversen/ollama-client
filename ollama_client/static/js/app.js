@@ -16,7 +16,7 @@ const copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox=
 const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
 
 // Math rendering
-const useMathjax = config.use_mathjax;
+const useKatex = config.use_katex;
 
 // States
 let isStreaming = false;
@@ -218,7 +218,7 @@ async function renderMathJax(contentElem) {
     //
     // Fix matrix rendering. This be done like this:
     // Replace '\\' with '\cr'
-    if (useMathjax) {
+    if (useKatex) {
         renderMathInElement(contentElem, {
             // delimiters: [
             //     { left: '$', right: '$', display: true },
