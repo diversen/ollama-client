@@ -1,7 +1,9 @@
 from starlette.requests import Request
 from starlette.routing import Route
 from starlette.responses import StreamingResponse, JSONResponse, RedirectResponse
-from ollama import AsyncClient
+
+from openai import OpenAI
+from openai import OpenAIError
 import json
 from ollama_client.core import base_context
 from ollama_client.core import flash
@@ -11,14 +13,27 @@ from ollama_client.core import session
 from ollama_client.core.templates import get_templates
 from ollama_client.models import chat_model, user_model
 from ollama_client.core.exceptions import UserValidate
-from ollama_client.tools import tools_utils
 
-
+# Logger
 logger: logging.Logger = logging.getLogger(__name__)
 templates = get_templates()
 
+# Configuration
+API_BASE_URL = getattr(config, "API_BASE_URL", "")
+API_KEY = getattr(config, "API_KEY", "")
+
+MODELS = getattr(config, "MODELS", {})
+PROVIDERS = getattr(config, "PROVIDERS", {})
+
+TOOL_REGISTRY = getattr(config, "TOOL_REGISTRY", {})
+TOOLS = getattr(config, "TOOLS", [])
+TOOL_MODELS = getattr(config, "TOOL_MODELS", [])
+
 
 async def chat_page(request: Request):
+    """
+    The GET chat page
+    """
     logged_in = await session.is_logged_in(request)
     if not logged_in:
         flash.set_notice(request, "You must be logged in to access the chat")
@@ -38,6 +53,20 @@ async def chat_page(request: Request):
     return templates.TemplateResponse("home/chat.html", context)
 
 
+def _execute_tool(tool_call):
+    """
+    Execute a tool call
+    """
+    func_name = tool_call["function"]["name"]
+    args = json.loads(tool_call["function"]["arguments"])
+    logger.info(f"Executing tool: {func_name}({args})")
+
+    if func_name in TOOL_REGISTRY:
+        return TOOL_REGISTRY[func_name](**args)
+    else:
+        return f"Unknown tool: {func_name}"
+
+
 async def _chat_response_stream(messages, model, logged_in):
     profile = await user_model.get_profile(logged_in)
     if "system_message" in profile and profile["system_message"]:
@@ -51,41 +80,83 @@ async def _chat_response_stream(messages, model, logged_in):
         messages.insert(0, system_message_dict)
 
     try:
-        client = AsyncClient()
+
+        provider = MODELS.get(model)
+        provider_info = PROVIDERS.get(provider)
+
+        client = OpenAI(
+            api_key=provider_info["api_key"],
+            base_url=provider_info["base_url"],
+        )
+
         chat_args = {
             "model": model,
-            "options": {
-                # "top_k": 100, #  Limits the sampling pool to the top k tokens
-                # "top_p": 0.0001,  # 0 - 1 limits sampling to tokens with cumulative probability ≤ p
-                # "num_predict": 10,  # Max number of tokens to generate
-                # "temperature": 1,  # 0 to 1 (default is 0.8)
-                # "seed": 123,  # Seed in order to get the same results
-                # "presence_penalty": 2,
-                # "frequency_penalty": 2,
-            },
             "messages": messages,
             "stream": True,
         }
 
-        if tools_utils.is_tools_supported(model):
-            logger.info(f"Tools available for model: {model}")
-            chat_args["tools"] = getattr(config, "TOOLS_AVAILABLE", [])
-        else:
-            logger.info(f"No tools available for model: {model}")
+        if model in TOOL_MODELS:
+            chat_args["tools"] = TOOLS
 
-        response = await client.chat(**chat_args)
-        first_part = True
-        async for part in response:
-            part_dict = part.model_dump()
+        response = client.chat.completions.create(**chat_args)
+        tool_call: dict = {}
+        for chunk in response:
+            delta = chunk.choices[0].delta
 
-            # Tools are detected in the first part
-            if first_part and tools_utils.is_tool_part(part_dict):
-                first_part = False
-                data = tools_utils.call_tools(part_dict["message"]["tool_calls"])
-                yield f"data: {json.dumps(data)}\n\n"
-            else:
-                part_json = json.dumps(part_dict)
-                yield f"data: {part_json}\n\n"
+            # Accumulate tool call
+            if delta.tool_calls:
+                call = delta.tool_calls[0]
+                if not tool_call:
+                    tool_call = {
+                        "id": call.id,
+                        "type": call.type,
+                        "function": {"name": "", "arguments": ""},
+                    }
+
+                if call.function and call.function.name:
+                    tool_call["function"]["name"] += call.function.name
+                if call.function and call.function.arguments:
+                    tool_call["function"]["arguments"] += call.function.arguments
+
+            # If assistant finishes with a tool call, break
+            if chunk.choices[0].finish_reason == "tool_calls":
+                break
+
+            model_dict = chunk.model_dump()
+            json_chunk = json.dumps(model_dict)
+            yield f"data: {json_chunk}\n\n"
+
+        if tool_call:
+            result = _execute_tool(tool_call)
+
+            # Append assistant tool call and tool response
+            messages.append(
+                {"role": "assistant", "tool_calls": [tool_call]},
+            )
+
+            messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": tool_call["id"],
+                    "content": result,
+                }
+            )
+
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                stream=True,
+            )
+
+            for chunk in response:
+                model_dict = chunk.model_dump()
+                json_chunk = json.dumps(model_dict)
+                yield f"data: {json_chunk}\n\n"
+
+    except OpenAIError as e:
+        # json_error = json.dumps(e)
+        logger.exception(f"OpenAI error")
+        yield json.dumps({"error": "An error occured. Please try again later"})
 
     except Exception:
         logger.exception("Streaming error")
@@ -157,26 +228,17 @@ async def json_tools(request: Request):
     return JSONResponse({"tool": tool, "text": ret_data})
 
 
-async def _get_model_names(sort_by_name=True):
-    try:
-        client = AsyncClient()
-        data = await client.list()
+async def _get_model_names():
 
-        model_names = []
-        model_list = data.models
+    models = []
+    for model_name in MODELS.keys():
+        models.append(model_name)
 
-        for model in model_list:
-            model_names.append(model.model)
-
-        if sort_by_name:
-            model_names.sort()
-
-        return model_names
-    except Exception:
-        raise Exception("System could not get Ollama model names from Ollama API")
+    return models
 
 
 async def list_models(request: Request):
+
     model_names = await _get_model_names()
     return JSONResponse({"model_names": model_names})
 
