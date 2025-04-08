@@ -220,12 +220,24 @@ async function renderMathJax(contentElem) {
     // Replace '\\' with '\cr'
     if (useMathjax) {
         renderMathInElement(contentElem, {
+            // delimiters: [
+            //     { left: '$', right: '$', display: true },
+            //     { left: '\(', right: '\)', display: false },
+            //     { left: '\[', right: '\]', display: true },
+            //     { left: '\begin{equation}', right: '\end{equation}', display: true }
+            // ],
             delimiters: [
-                { left: '$', right: '$', display: true },
-                { left: '\(', right: '\)', display: false },
-                { left: '\[', right: '\]', display: true },
-                { left: '\begin{equation}', right: '\end{equation}', display: true }
-            ],
+                
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false},
+                {left: "\\(", right: "\\)", display: false},
+                {left: "\\begin{equation}", right: "\\end{equation}", display: true},
+                {left: "\\begin{align}", right: "\\end{align}", display: true},
+                {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
+                {left: "\\begin{gather}", right: "\\end{gather}", display: true},
+                {left: "\\begin{CD}", right: "\\end{CD}", display: true},
+                {left: "\\[", right: "\\]", display: true}
+            ]
 
             // preProcess: (text) => {
             //     console.log(text)
@@ -291,9 +303,12 @@ async function renderAssistantMessage() {
                 }
 
                 if (done) break;
-                decoder.decode(value, { stream: true })
-                    .split('data: ')
-                    .forEach(processChunk);
+                let decoded = decoder.decode(value, { stream: true });
+                let dataElems = decoded.split('data: '); 
+
+                // Remove empty elements form the array
+                dataElems = dataElems.filter((data) => data.trim() !== '');
+                dataElems.forEach(processChunk);
             }
         } catch (error) {
             loader.classList.add('hidden');
@@ -306,12 +321,10 @@ async function renderAssistantMessage() {
     let totalTokenCount = 0;
     const processChunk = async (dataPart) => {
         try {
-            const trimmed = dataPart.trim();
-            if (!trimmed) return;
-            const data = JSON.parse(trimmed);
 
-            const messagePart = data.message;
-            const isDone = data.done;
+            const data = JSON.parse(dataPart);
+            const messagePart = data.choices[0].delta.content;
+            const isDone = data.choices[0].finish_reason
             const error = data.error;
 
             if (error) {
@@ -319,7 +332,7 @@ async function renderAssistantMessage() {
             }
 
             totalTokenCount += 1;
-            streamedResponseText += messagePart.content;
+            streamedResponseText += messagePart;
 
             if (totalTokenCount % 1 === 0) {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
@@ -328,21 +341,21 @@ async function renderAssistantMessage() {
 
             if (isDone) {
                 updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
+                console.log('Done streaming');
                 scrollToBottom();
                 clearStreaming();
-
             }
         } catch (error) {
             console.log("Error in processChunk:", error);
             clearStreaming();
-            Flash.setMessage(error.message || error, 'error');
+            controller.abort();
         }
     };
 
     // Error handling for stream
     const handleStreamError = (error) => {
         if (error.name === 'AbortError') {
-            Flash.setMessage('Request was aborted', 'success');
+            Flash.setMessage('Request was aborted', 'notice');
             console.log('Request was aborted');
         } else {
             console.error("Error in processStream:", error);
