@@ -1,32 +1,33 @@
-function escapeKatexDelimiters(text) {
-    // Replace inline \(...\) with \\(...\\), but not \\\\(...\\\\)
-    text = text.replace(/(?<!\\)\\\((.*?)(?<!\\)\\\)/gs, '\\\\($1\\\\)');
-   
-    // Replace block \[...\] with \\[...\\], but not \\\[...\\\]
-    text = text.replace(/(?<!\\)\\\[([\s\S]*?)(?<!\\)\\\]/gs, '\\\\[$1\\\\]');
-   
-    return text;
+function escapeKatexDelimiters(textToProcess) {
+
+    textToProcess = textToProcess.replace(/(?<!\\)\\\(/g, '\\\\(');
+    textToProcess = textToProcess.replace(/(?<!\\)\\\)/g, '\\\\)');
+    textToProcess = textToProcess.replace(/(?<!\\)\\\[/g, '\\\\[');
+    textToProcess = textToProcess.replace(/(?<!\\)\\\]/g, '\\\\]');    
+    return textToProcess;
 }
 
 /**
  * Substitute thinking tags
  */
-function substituteThinkingTags(streamedResponseText) {
-    streamedResponseText = streamedResponseText.replace(/<think>/g, '**Think begin**');
-    streamedResponseText = streamedResponseText.replace(/<thinking>/g, '**Think begin**');
-    streamedResponseText = streamedResponseText.replace(/<thought>/g, '**Think begin**');
+function modifySteamedText(textToProcess) {
 
-    streamedResponseText = streamedResponseText.replace(/<\/think>/g, '**Think end**');
-    streamedResponseText = streamedResponseText.replace(/<\/thinking>/g, '**Think end**');
-    streamedResponseText = streamedResponseText.replace(/<\/thought>/g, '**Think end**');
+
+    textToProcess = textToProcess.replace(/<think>/g, '**Think begin**');
+    textToProcess = textToProcess.replace(/<thinking>/g, '**Think begin**');
+    textToProcess = textToProcess.replace(/<thought>/g, '**Think begin**');
+
+    textToProcess = textToProcess.replace(/<\/think>/g, '**Think end**');
+    textToProcess = textToProcess.replace(/<\/thinking>/g, '**Think end**');
+    textToProcess = textToProcess.replace(/<\/thought>/g, '**Think end**');
 
     // Substitute '\\' with '\cr '
-    streamedResponseText = streamedResponseText.replace(/\\\\/g, '\\cr');
-    streamedResponseText = escapeKatexDelimiters(streamedResponseText);
+    
+    textToProcess = textToProcess.replace(/\\\\/g, '\\cr');
+    textToProcess = escapeKatexDelimiters(textToProcess);
 
-    return streamedResponseText;
+    
+    return textToProcess;
 }
 
-
-
-export { substituteThinkingTags };
+export { modifySteamedText };

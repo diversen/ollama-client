@@ -6,7 +6,7 @@ import { getIsScrolling, setIsScrolling } from '/static/js/app-events.js';
 import { addCopyButtons } from '/static/js/app-copy-buttons.js';
 import { logError } from '/static/js/error-log.js';
 import { dd } from '/static/js/diff-dom.js';
-import { substituteThinkingTags } from '/static/js/utils.js';
+import { modifySteamedText } from '/static/js/utils.js';
 
 const config = await getConfig();
 
@@ -196,7 +196,7 @@ async function renderStaticAssistantMessage(message) {
 
     // Render copy message
     renderCopyMessage(container, message);
-    message = substituteThinkingTags(message);
+    message = modifySteamedText(message);
 
     contentElement.innerHTML = mdNoHTML.render(message);
     highlightCodeInElement(contentElement);
@@ -250,11 +250,11 @@ async function updateContentDiff(contentElement, hiddenContentElem, streamedResp
     
     const startTime = performance.now();
 
-    streamedResponseText = substituteThinkingTags(streamedResponseText);
+    streamedResponseText = modifySteamedText(streamedResponseText);
     hiddenContentElem.innerHTML = mdNoHTML.render(streamedResponseText); 
     
     highlightCodeInElement(hiddenContentElem);
-    await renderKatex(hiddenContentElem);
+    // await renderKatex(hiddenContentElem);
     
     try {
         const diff = dd.diff(contentElement, hiddenContentElem);
@@ -434,7 +434,6 @@ async function loadDialog(savedMessages) {
 
     for (const msg of currentDialogMessages) {
         if (msg.role === 'user') {
-            // const mes = substituteThinkingTags(msg.content);
             const message = msg.content;
             renderStaticUserMessage(message);
         } else {
