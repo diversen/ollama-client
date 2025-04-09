@@ -200,14 +200,14 @@ async function renderStaticAssistantMessage(message) {
 
     contentElement.innerHTML = mdNoHTML.render(message);
     highlightCodeInElement(contentElement);
-    await renderMathJax(contentElement);
+    await renderKatex(contentElement);
     await addCopyButtons(contentElement, config);
 }
 
 /**
  * Render math if enabled
  */
-async function renderMathJax(contentElem) {
+async function renderKatex(contentElem) {
     // This is not working optimally. 
     // LLMs might produce sentences like: 
     // a) (sufficiently well-behaved) or
@@ -220,25 +220,17 @@ async function renderMathJax(contentElem) {
     // Replace '\\' with '\cr'
     if (useKatex) {
         renderMathInElement(contentElem, {
-            // delimiters: [
-            //     { left: '$', right: '$', display: true },
-            //     { left: '\(', right: '\)', display: false },
-            //     { left: '\[', right: '\]', display: true },
-            //     { left: '\begin{equation}', right: '\end{equation}', display: true }
-            // ],
             delimiters: [
                 
                 {left: "$$", right: "$$", display: true},
                 {left: "$", right: "$", display: false},
                 {left: "\\(", right: "\\)", display: false},
-                {left: "\(", right: "\)", display: false},
                 {left: "\\begin{equation}", right: "\\end{equation}", display: true},
                 {left: "\\begin{align}", right: "\\end{align}", display: true},
                 {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
                 {left: "\\begin{gather}", right: "\\end{gather}", display: true},
                 {left: "\\begin{CD}", right: "\\end{CD}", display: true},
                 {left: "\\[", right: "\\]", display: true},
-                {left: "\[", right: "\]", display: true}
             ],
 
             // preProcess: (text) => {
@@ -254,16 +246,26 @@ async function renderMathJax(contentElem) {
  * Update update content diff
  */
 
-function updateContentDiff(contentElement, hiddenContentElem, streamedResponseText) {
+async function updateContentDiff(contentElement, hiddenContentElem, streamedResponseText) {
+    
+    const startTime = performance.now();
+
     streamedResponseText = substituteThinkingTags(streamedResponseText);
-    hiddenContentElem.innerHTML = mdNoHTML.render(streamedResponseText);
+    hiddenContentElem.innerHTML = mdNoHTML.render(streamedResponseText); 
+    
     highlightCodeInElement(hiddenContentElem);
+    await renderKatex(hiddenContentElem);
+    
     try {
         const diff = dd.diff(contentElement, hiddenContentElem);
         if (diff.length) dd.apply(contentElement, diff);
     } catch (error) {
         console.log("Error in diffDOMExec:", error);
     }
+
+    const endTime = performance.now();
+    const timeSpent = endTime - startTime;
+    console.log(`Time spent: ${timeSpent} milliseconds`);
 }
 
 
@@ -322,8 +324,9 @@ async function renderAssistantMessage() {
     // Function to handle chunk processing
     let totalTokenCount = 0;
     const processChunk = async (dataPart) => {
+        
         try {
-
+            
             const data = JSON.parse(dataPart);
             const messagePart = data.choices[0].delta.content;
             const finishReason = data.choices[0].finish_reason
@@ -340,12 +343,12 @@ async function renderAssistantMessage() {
             }
 
             if (totalTokenCount % 1 === 0) {
-                updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
+                await updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 scrollToBottom();
             }
 
             if (finishReason) {
-                updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
+                await updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 console.log('Done streaming');
                 scrollToBottom();
                 clearStreaming();
@@ -399,7 +402,7 @@ async function renderAssistantMessage() {
     }
 
     // Done processing
-    await renderMathJax(contentElement);
+    await renderKatex(contentElement);
     await addCopyButtons(contentElement, config);
 
     let assistantMessage = { role: 'assistant', content: streamedResponseText };
