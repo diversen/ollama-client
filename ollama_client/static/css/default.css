@@ -400,4 +400,5 @@ a.delete svg {
     font-size: 1.2em; 
     overflow-y: hidden;
     overflow-x: scroll;
+    min-height: 1.2em;
 }
