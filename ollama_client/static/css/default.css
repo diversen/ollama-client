@@ -396,4 +396,8 @@ a.delete svg {
     display: none;
 }
 
-.katex { font-size: 1.2em; }
+.katex { 
+    font-size: 1.2em; 
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
