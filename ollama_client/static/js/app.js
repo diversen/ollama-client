@@ -10,13 +10,13 @@ import { modifySteamedText } from '/static/js/utils.js';
 
 const config = await getConfig();
 
+// Math rendering
+const useKatex = config.use_katex;
+
 // Copy icon and check icon
 const copyIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>`;
 
 const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>`;
-
-// Math rendering
-const useKatex = config.use_katex;
 
 // States
 let isStreaming = false;
@@ -152,31 +152,32 @@ function validateUserMessage(userMessage) {
  */
 async function sendUserMessage() {
 
-    await isLoggedInOrRedirect();
-
-    const userMessage = messageElem.value.trim();
-    if (!validateUserMessage(userMessage)) {
-        return;
-    }
-
-    // Save as dialog if it's the first message
-    let message = { role: 'user', content: userMessage };
-
-    // Create new dialog if there are no messages
-    if (currentDialogMessages.length === 0) {
-        currentDialogID = await createDialog(userMessage);
-    }
-
-    // Push user message to current dialog messages
-    currentDialogMessages.push(message);
-
-    // Save user message and push to all messages
-    await createMessage(currentDialogID, message);
-
-    // Clear the input field
-    messageElem.value = '';
-
     try {
+
+        await isLoggedInOrRedirect();
+
+        const userMessage = messageElem.value.trim();
+        if (!validateUserMessage(userMessage)) {
+            return;
+        }
+    
+        // Save as dialog if it's the first message
+        let message = { role: 'user', content: userMessage };
+    
+        // Create new dialog if there are no messages
+        if (currentDialogMessages.length === 0) {
+            currentDialogID = await createDialog(userMessage);
+        }
+    
+        // Push user message to current dialog messages
+        currentDialogMessages.push(message);
+    
+        // Save user message and push to all messages
+        await createMessage(currentDialogID, message);
+    
+        // Clear the input field
+        messageElem.value = '';
+
         renderStaticUserMessage(userMessage);
         setIsScrolling(true);
         await renderAssistantMessage(message);
@@ -196,18 +197,15 @@ async function renderStaticAssistantMessage(message) {
 
     // Render copy message
     renderCopyMessage(container, message);
-    message = modifySteamedText(message);
-
-    contentElement.innerHTML = mdNoHTML.render(message);
-    highlightCodeInElement(contentElement);
-    await renderKatex(contentElement);
+    renderSteamedResponseText(contentElement, message);
+    
     await addCopyButtons(contentElement, config);
 }
 
 /**
  * Render math if enabled
  */
-async function renderKatex(contentElem) {
+function renderKatex(contentElem) {
     // This is not working optimally. 
     // LLMs might produce sentences like: 
     // a) (sufficiently well-behaved) or
@@ -243,29 +241,52 @@ async function renderKatex(contentElem) {
 }
 
 /**
- * Update update content diff
+ * Render streamed response text into the content element
  */
+function renderSteamedResponseText(contentElement, streamedResponseText) {
+    const startTime = performance.now();
+    
+    streamedResponseText = modifySteamedText(streamedResponseText);
+    contentElement.innerHTML = mdNoHTML.render(streamedResponseText);
+    
+    // May optimize highlightCodeInElement. And katex rendering
+    highlightCodeInElement(contentElement);
+    renderKatex(contentElement);
+
+    const endTime = performance.now();
+    const timeSpent = endTime - startTime;
+    console.log(`Time spent: ${timeSpent} milliseconds`);
+}
+
+let lastExecutionTime = 0;
+let pendingExecution = false;
+let executionInterval = 10
+
 
 async function updateContentDiff(contentElement, hiddenContentElem, streamedResponseText) {
-    
-    const startTime = performance.now();
+    const currentTime = performance.now();
 
-    streamedResponseText = modifySteamedText(streamedResponseText);
-    hiddenContentElem.innerHTML = mdNoHTML.render(streamedResponseText); 
-    
-    highlightCodeInElement(hiddenContentElem);
-    // await renderKatex(hiddenContentElem);
-    
+    if (currentTime - lastExecutionTime < executionInterval) {
+        if (!pendingExecution) {
+            pendingExecution = true;
+            setTimeout(async () => {
+                pendingExecution = false;
+                await updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
+            }, executionInterval - (currentTime - lastExecutionTime));
+        }
+        return;
+    }
+
+    lastExecutionTime = currentTime;
+
+    renderSteamedResponseText(hiddenContentElem, streamedResponseText);
+
     try {
         const diff = dd.diff(contentElement, hiddenContentElem);
         if (diff.length) dd.apply(contentElement, diff);
     } catch (error) {
         console.log("Error in diffDOMExec:", error);
     }
-
-    const endTime = performance.now();
-    const timeSpent = endTime - startTime;
-    console.log(`Time spent: ${timeSpent} milliseconds`);
 }
 
 
@@ -343,12 +364,12 @@ async function renderAssistantMessage() {
             }
 
             if (totalTokenCount % 1 === 0) {
-                await updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
+                updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 scrollToBottom();
             }
 
             if (finishReason) {
-                await updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
+                updateContentDiff(contentElement, hiddenContentElem, streamedResponseText);
                 console.log('Done streaming');
                 scrollToBottom();
                 clearStreaming();
@@ -401,10 +422,10 @@ async function renderAssistantMessage() {
         Flash.setMessage('An error occurred. Please try again.', 'error');
     }
 
-    // Done processing
-    await renderKatex(contentElement);
+    // Enable buttons
     await addCopyButtons(contentElement, config);
 
+    // Save message to the dialog
     let assistantMessage = { role: 'assistant', content: streamedResponseText };
     await createMessage(currentDialogID, assistantMessage);
 
@@ -447,9 +468,14 @@ async function loadDialog(savedMessages) {
  * Initialize the dialog
  */
 async function initializeDialog(dialogID) {
-    let allMessages = await getMessages(dialogID);
-    console.log('All messages:', allMessages);
-    await loadDialog(allMessages);
+    try {
+        let allMessages = await getMessages(dialogID);
+        console.log('All messages:', allMessages);
+        await loadDialog(allMessages);
+    } catch (error) {
+        console.error("Error in initializeDialog:", error);
+        Flash.setMessage('An error occurred. Please try again.', 'error');
+    }
 }
 
 /**
