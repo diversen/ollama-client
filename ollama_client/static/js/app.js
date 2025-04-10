@@ -249,7 +249,7 @@ function renderSteamedResponseText(contentElement, streamedResponseText) {
     streamedResponseText = modifySteamedText(streamedResponseText);
     contentElement.innerHTML = mdNoHTML.render(streamedResponseText);
     
-    // May optimize highlightCodeInElement. And katex rendering
+    // Optimize highlightCodeInElement. And katex rendering
     highlightCodeInElement(contentElement);
     renderKatex(contentElement);
 
@@ -441,7 +441,10 @@ async function renderAssistantMessage() {
  */
 function scrollToBottom() {
     if (getIsScrolling()) {
-        responsesElem.scrollTop = responsesElem.scrollHeight;
+        responsesElem.scrollTo({
+            top: responsesElem.scrollHeight,
+            behavior: 'smooth'
+        });
     }
 }
 

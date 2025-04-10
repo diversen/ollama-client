@@ -25,6 +25,10 @@ body {
     height: 100vh;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 
 nav {
     position: fixed;
@@ -271,7 +275,8 @@ pre code {
 }
 
 #message {
-    overflow: hidden;
+    height: 60px;
+    overflow: auto;
 }
 
 /* on screens with small height make the chat textarea smaller */
@@ -390,3 +395,5 @@ a.delete svg {
 .hidden {
     display: none;
 }
+
+.katex { font-size: 1.2em; }
